@@ -14,8 +14,11 @@ ticker_input = st.sidebar.text_input("Enter Ticker (e.g. AAPL, BBRI.JK)", value=
 period = st.sidebar.selectbox("Timeframe", ["1y", "2y", "5y", "max"])
 
 # Fungsi Ambil Data
-@st.cache_data
+@st.cache_data(ttl=3600) # Simpan data di cache selama 1 jam
 def load_data(ticker, p):
+    import time
+    # Tambahkan sedikit delay agar tidak dianggap bot yang agresif
+    time.sleep(1) 
     stock = yf.Ticker(ticker)
     df = stock.history(period=p)
     return df, stock.info
