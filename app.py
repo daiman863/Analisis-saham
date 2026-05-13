@@ -14,12 +14,20 @@ ticker_input = st.sidebar.text_input("Enter Ticker (e.g. AAPL, BBRI.JK)", value=
 period = st.sidebar.selectbox("Timeframe", ["1y", "2y", "5y", "max"])
 
 # Fungsi Ambil Data
-@st.cache_data(ttl=3600) # Simpan data di cache selama 1 jam
+@st.cache_data(ttl=3600)
 def load_data(ticker, p):
-    import time
-    # Tambahkan sedikit delay agar tidak dianggap bot yang agresif
-    time.sleep(1) 
-    stock = yf.Ticker(ticker)
+    import yfinance as yf
+    import requests
+    
+    # Menyamar sebagai browser Chrome agar tidak diblokir
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    
+    session = requests.Session()
+    session.headers.update(headers)
+    
+    stock = yf.Ticker(ticker, session=session)
     df = stock.history(period=p)
     return df, stock.info
 
